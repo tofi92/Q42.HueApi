@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace HueApi
 {
@@ -6,7 +7,7 @@ namespace HueApi
   {
     protected const string KeyHeaderName = "hue-application-key";
 
-    public RemoteHueApi(string appKey, string remoteAccessToken, HttpClient? client = null)
+    public RemoteHueApi(string appKey, string remoteAccessToken, HttpClient? client = null, JsonSerializerOptions? jsonSerializerOptions = null)
     {
       if (client == null)
       {
@@ -19,6 +20,7 @@ namespace HueApi
       client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", remoteAccessToken);
 
       this.client = client;
+      this.jsonSerializerOptions = jsonSerializerOptions ?? JsonSerializerOptions.Default;
     }
   }
 }

@@ -14,7 +14,8 @@ namespace HueApi
   public  abstract partial class BaseHueApi
   {
     protected HttpClient client = default!;
-   
+    protected JsonSerializerOptions jsonSerializerOptions = default!;
+
     protected const string ResourceUrl = "clip/v2/resource";
     protected const string LightUrl = $"{ResourceUrl}/light";
     protected const string SceneUrl = $"{ResourceUrl}/scene";
@@ -525,7 +526,7 @@ namespace HueApi
 
     internal async Task<HuePutResponse> HuePutRequestAsync<D>(string url, D data)
     {
-      JsonSerializerOptions options = new()
+      JsonSerializerOptions options = new(jsonSerializerOptions)
       {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
       };
@@ -537,7 +538,7 @@ namespace HueApi
 
     internal async Task<HuePostResponse> HuePostRequestAsync<D>(string url, D data)
     {
-      JsonSerializerOptions options = new()
+      JsonSerializerOptions options = new(jsonSerializerOptions)
       {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
       };
@@ -555,7 +556,7 @@ namespace HueApi
 
       if (response.IsSuccessStatusCode)
       {
-        return (await response.Content.ReadFromJsonAsync<T>().ConfigureAwait(false)) ?? new();
+        return (await response.Content.ReadFromJsonAsync<T>(jsonSerializerOptions).ConfigureAwait(false)) ?? new();
       }
       else if(response.StatusCode == System.Net.HttpStatusCode.Forbidden)
       {

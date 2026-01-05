@@ -2,6 +2,7 @@ using HueApi.Models.Clip;
 using HueApi.Models.Exceptions;
 using HueApi.Models.Responses;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -19,12 +20,13 @@ namespace HueApi
     private string ip;
     private string? key;
 
-    public LocalHueApi(string ip, string? key, HttpClient? client = null)
+    public LocalHueApi(string ip, string? key, HttpClient? client = null, JsonSerializerOptions? jsonSerializerOptions = null)
     {
       this.ip = ip;
       this.key = key;
 
       this.client = GetConfiguredHttpClient(client);
+      this.jsonSerializerOptions = jsonSerializerOptions ?? JsonSerializerOptions.Default;
     }
 
     public void SetBaseAddress(Uri uri)
@@ -59,7 +61,7 @@ namespace HueApi
 
                 if (jsonMsg != null)
                 {
-                  var data = System.Text.Json.JsonSerializer.Deserialize<List<EventStreamResponse>>(jsonMsg);
+                  var data = System.Text.Json.JsonSerializer.Deserialize<List<EventStreamResponse>>(jsonMsg, jsonSerializerOptions);
 
                   if (data != null && data.Any())
                   {
@@ -188,7 +190,7 @@ namespace HueApi
       BridgeConfig? config = null;
       if (node is JsonObject)
       {
-        config = JsonSerializer.Deserialize<BridgeConfig>(node);
+        config = JsonSerializer.Deserialize<BridgeConfig>(node, jsonSerializerOptions);
 
         if (config != null)
         {
