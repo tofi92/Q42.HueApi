@@ -26,7 +26,12 @@ namespace HueApi
       this.key = key;
 
       this.client = GetConfiguredHttpClient(client);
-      this.jsonSerializerOptions = jsonSerializerOptions ?? JsonSerializerOptions.Default;
+
+      var defaultOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
+      {
+        TypeInfoResolver = HueJsonSerializerContext.Default
+      };
+      this.jsonSerializerOptions = jsonSerializerOptions ?? defaultOptions;
     }
 
     public void SetBaseAddress(Uri uri)

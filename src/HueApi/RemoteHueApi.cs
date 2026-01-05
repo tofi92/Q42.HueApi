@@ -20,7 +20,11 @@ namespace HueApi
       client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", remoteAccessToken);
 
       this.client = client;
-      this.jsonSerializerOptions = jsonSerializerOptions ?? JsonSerializerOptions.Default;
+      var defaultOptions = new JsonSerializerOptions(JsonSerializerOptions.Default)
+      {
+        TypeInfoResolver = HueJsonSerializerContext.Default
+      };
+      this.jsonSerializerOptions = jsonSerializerOptions ?? defaultOptions;
     }
   }
 }
